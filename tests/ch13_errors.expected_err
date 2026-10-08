@@ -1,0 +1,6 @@
+[line 2] Error at 'Oops': A class can't inherit from itself.
+[line 6] Error at 'super': Can't use 'super' in a class with no superclass.
+[line 11] Error at 'super': Can't use 'super' outside of a class.
+[line 18] Error at 'super': Can't use 'super' in a trait.
+[line 21] Error at 'Loop': A class or trait can't use itself.
+[line 25] Error at 'inner': Can't use 'inner' outside of a class.

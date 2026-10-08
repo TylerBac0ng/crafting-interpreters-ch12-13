@@ -1,0 +1,26 @@
+// Chapter 13: errors reported by the resolver.
+class Oops < Oops {}
+
+class NoParent {
+  method() {
+    super.method();
+  }
+}
+
+fun notInClass() {
+  super.method();
+}
+
+// Chapter 13, challenge 1: traits have no superclass, and can't use
+// themselves.
+trait T {
+  method() {
+    super.method();
+  }
+}
+trait Loop with Loop {}
+
+// Chapter 13, challenge 2: inner only exists inside methods.
+fun f() {
+  inner();
+}

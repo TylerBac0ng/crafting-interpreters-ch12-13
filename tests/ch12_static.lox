@@ -1,0 +1,101 @@
+// Chapter 12, challenge 1: static methods with metaclasses.
+
+// The example from the book.
+class Math {
+  class square(n) {
+    return n * n;
+  }
+}
+print Math.square(3);
+
+// Static methods and instance methods can share a name.
+class Temperature {
+  init(celsius) {
+    this.celsius = celsius;
+  }
+
+  class fromFahrenheit(f) {
+    // "this" in a static method is the class, so it can be called.
+    return this((f - 32) * 5 / 9);
+  }
+
+  show() {
+    print this.celsius;
+  }
+
+  class show() {
+    print "Temperature class";
+  }
+}
+Temperature.fromFahrenheit(212).show();
+Temperature.show();
+
+// A class is an instance of its metaclass, so it can have fields:
+// these act as static fields.
+class Id {
+  class next() {
+    this.last = this.last + 1;
+    return this.last;
+  }
+}
+Id.last = 0;
+Id.next();
+Id.next();
+print Id.next();
+
+// Static getters (combining challenges 1 and 2).
+class Config {
+  class version {
+    return "1.2";
+  }
+}
+print Config.version;
+
+// Static methods are inherited: the metaclass's superclass is the
+// superclass's metaclass.
+class Animal {
+  class create(name) {
+    var animal = this();
+    animal.name = name;
+    return animal;
+  }
+
+  describe() {
+    print this.name + ": " + this.kind();
+  }
+
+  kind() {
+    return "animal";
+  }
+}
+class Dog < Animal {}
+var rex = Dog.create("Rex");
+print rex;
+rex.describe();
+
+// super in a static method finds the superclass's static method.
+class Base {
+  class tag() {
+    return "base";
+  }
+}
+class Derived < Base {
+  class label() {
+    return "derived from " + super.tag();
+  }
+}
+print Derived.label();
+
+// The class printed inside a static method is the receiver, which can
+// be a subclass.
+class Who {
+  class me() {
+    print this;
+  }
+}
+class WhoAmI < Who {}
+WhoAmI.me();
+
+// Calling a static method on an instance is an error: instances only
+// see instance methods.
+Math().square(2);

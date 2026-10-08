@@ -1,0 +1,83 @@
+// Chapter 13, challenge 3: lists.
+
+var list = [1, 2, 3];
+print list;
+print list[0];
+print list.length;
+
+// Assignment to an element, and nested lists.
+list[1] = "two";
+print list;
+var grid = [[1, 2], [3, 4]];
+grid[1][0] = 30;
+print grid[1];
+print grid[1][0] + grid[0][1];
+
+// push and pop.
+var stack = [];
+stack.push("a");
+stack.push("b");
+stack.push("c");
+print stack.pop();
+print stack;
+print stack.length;
+
+// Iterating with a for loop.
+var total = 0;
+var nums = [3, 1, 4, 1, 5, 9, 2, 6];
+for (var i = 0; i < nums.length; i = i + 1) {
+  total = total + nums[i];
+}
+print total;
+
+// map and filter take functions, including lambdas (10.2).
+print nums.map(fun (n) { return n * n; });
+print nums.filter(fun (n) { return n > 3; });
+fun isOdd(n) {
+  return n - 2 * floorHalf(n) == 1;
+}
+fun floorHalf(n) {
+  var half = 0;
+  while ((half + 1) * 2 <= n) half = half + 1;
+  return half;
+}
+print nums.filter(isOdd);
+
+// Lists hold any value: nil, booleans, functions, instances, lists.
+class Point {
+  init(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+
+  // A getter (12.2) that returns a list.
+  coords {
+    return [this.x, this.y];
+  }
+}
+var mixed = [nil, true, "str", Point(1, 2), [], isOdd];
+print mixed;
+print Point(5, 6).coords;
+var points = [Point(1, 2), Point(3, 4)];
+points[0].x = 100;
+print points[0].coords;
+
+// Lists are objects: two names can refer to the same list, and equality
+// is identity.
+var alias = stack;
+alias.push("z");
+print stack;
+print alias == stack;
+print [1] == [1];
+
+// A list that contains itself prints without looping forever.
+var loop = [1];
+loop.push(loop);
+print loop;
+
+// Strings can be indexed too (read-only).
+var word = "lox";
+print word[0] + word[2];
+
+// Reading past the end is a runtime error.
+print list[3];

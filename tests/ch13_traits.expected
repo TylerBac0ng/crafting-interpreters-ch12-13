@@ -1,0 +1,16 @@
+Donald swims.
+Donald flies.
+Donald quacks.
+<trait Swims>
+Nemo swims.
+true
+false
+true
+I am R2.
+I am Sam.
+I am Sam, waving.
+hello / hola
+begin transaction
+  save user
+commit
+local trait

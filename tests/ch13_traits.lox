@@ -1,0 +1,149 @@
+// Chapter 13, challenge 1: traits.
+
+// A trait is a named set of methods. A class copies them in with "with".
+trait Swims {
+  swim() {
+    print this.name + " swims.";
+  }
+}
+trait Flies {
+  fly() {
+    print this.name + " flies.";
+  }
+}
+class Animal {
+  init(name) {
+    this.name = name;
+  }
+}
+class Duck < Animal with Swims, Flies {
+  quack() {
+    print this.name + " quacks.";
+  }
+}
+var duck = Duck("Donald");
+duck.swim();
+duck.fly();
+duck.quack();
+print Swims;
+
+// The same trait reused by unrelated classes.
+class Fish < Animal with Swims {}
+Fish("Nemo").swim();
+
+// Traits can carry getters (12.2) and static methods (12.1).
+trait Comparable {
+  compareTo(other) {
+    return this.value - other.value;
+  }
+
+  lessThan(other) {
+    return this.compareTo(other) < 0;
+  }
+
+  isZero {
+    return this.value == 0;
+  }
+
+  class zero() {
+    var instance = this();
+    instance.value = 0;
+    return instance;
+  }
+}
+class Money with Comparable {
+  init() {
+    this.value = 0;
+  }
+}
+var a = Money();
+a.value = 5;
+var b = Money.zero();
+print b.lessThan(a);
+print a.lessThan(b);
+print b.isZero;
+
+// A trait can be built from other traits.
+trait HasName {
+  greeting {
+    return "I am " + this.name;
+  }
+}
+trait Introduces with HasName {
+  introduce() {
+    print this.greeting + ".";
+  }
+}
+class Robot with Introduces {
+  init() {
+    this.name = "R2";
+  }
+}
+Robot().introduce();
+
+// Reaching the same method through two traits (a "diamond") is fine.
+trait Waves with HasName {
+  wave() {
+    print this.greeting + ", waving.";
+  }
+}
+class Friend with Introduces, Waves {
+  init(name) {
+    this.name = name;
+  }
+}
+var friend = Friend("Sam");
+friend.introduce();
+friend.wave();
+
+// A class's own method overrides a trait's method, and settles a
+// conflict between two traits.
+trait English {
+  hello() {
+    print "hello";
+  }
+}
+trait Spanish {
+  hello() {
+    print "hola";
+  }
+}
+class Polyglot with English, Spanish {
+  hello() {
+    print "hello / hola";
+  }
+}
+Polyglot().hello();
+
+// Trait methods take part in inner() (13.2) like the class's own
+// methods.
+trait Saves {
+  save() {
+    print "begin transaction";
+    inner();
+    print "commit";
+  }
+}
+class Record with Saves {}
+class User < Record {
+  save() {
+    print "  save user";
+  }
+}
+User().save();
+
+// Traits in a block are locals like everything else (11.4).
+{
+  var prefix = "local ";
+  trait Local {
+    hi() {
+      return prefix + "trait";
+    }
+  }
+  class UsesLocal with Local {}
+  print UsesLocal().hi();
+}
+
+// Two traits providing different methods with the same name is a
+// conflict the class has to settle.
+class Confused with English, Spanish {}

@@ -1,0 +1,6 @@
+// Chapter 12: reading a property that was never set is a runtime error.
+class Empty {}
+var e = Empty();
+e.field = "set";
+print e.field;
+print e.missing;

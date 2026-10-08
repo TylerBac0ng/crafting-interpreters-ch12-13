@@ -1,0 +1,154 @@
+// Chapter 13, challenge 2: BETA-style inner(). The method highest in the
+// class hierarchy runs; it decides when (and if) the subclass's version
+// runs by calling inner().
+
+// The example from the book.
+class Doughnut {
+  cook() {
+    print "Fry until golden brown.";
+    inner();
+    print "Place in a nice box.";
+  }
+}
+class BostonCream < Doughnut {
+  cook() {
+    print "Pipe full of custard and coat with chocolate.";
+  }
+}
+BostonCream().cook();
+print "--";
+
+// With no subclass refinement, inner() does nothing and returns nil.
+Doughnut().cook();
+print "--";
+
+// A chain of three: each level wraps the one below it.
+class Html {
+  render() {
+    return "<html>" + inner() + "</html>";
+  }
+}
+class Body < Html {
+  render() {
+    return "<body>" + inner() + "</body>";
+  }
+}
+class Page < Body {
+  render() {
+    return "<p>hi</p>";
+  }
+}
+print Page().render();
+
+// A subclass can't skip the superclass: calling render on a Body still
+// starts at Html, and Body's inner() returns nil.
+fun orEmpty(value) {
+  if (value == nil) return "";
+  return value;
+}
+class SafeHtml {
+  render() {
+    return "<html>" + orEmpty(inner()) + "</html>";
+  }
+}
+class SafeBody < SafeHtml {
+  render() {
+    return "<body>" + orEmpty(inner()) + "</body>";
+  }
+}
+print SafeBody().render();
+
+// inner() passes arguments and returns the refinement's result.
+class Validator {
+  check(value) {
+    if (value == nil) return "missing";
+    var result = inner(value);
+    if (result == nil) return "ok";
+    return result;
+  }
+}
+class PositiveValidator < Validator {
+  check(value) {
+    if (value < 0) return "negative";
+  }
+}
+var v = PositiveValidator();
+print v.check(nil);
+print v.check(-1);
+print v.check(5);
+
+// A refinement can skip a level: inner() finds the highest class below
+// the current one that defines the method.
+class Top {
+  run() {
+    print "top";
+    inner();
+  }
+}
+class Middle < Top {}
+class Bottom < Middle {
+  run() {
+    print "bottom";
+  }
+}
+Bottom().run();
+
+// Static methods (12.1) and getters (12.2) use inner() too.
+class Report {
+  class header() {
+    print "== report ==";
+    inner();
+  }
+
+  title {
+    var sub = inner();
+    if (sub == nil) return "Report";
+    return "Report: " + sub;
+  }
+}
+class SalesReport < Report {
+  class header() {
+    print "(sales)";
+  }
+
+  title {
+    return "Sales";
+  }
+}
+SalesReport.header();
+print SalesReport().title;
+print Report().title;
+
+// inner() inside a lambda in a method refers to the method's inner.
+class Button {
+  onClick() {
+    return fun () {
+      print "click";
+      inner();
+    };
+  }
+}
+class LoudButton < Button {
+  onClick() {
+    print "CLICK!";
+  }
+}
+LoudButton().onClick()();
+
+// init follows the same rule: the superclass's init runs first and the
+// subclass's runs only through inner().
+class Base {
+  init(name) {
+    this.name = name;
+    this.log = "base";
+    inner(name);
+  }
+}
+class Derived < Base {
+  init(name) {
+    this.log = this.log + ", derived";
+  }
+}
+var d = Derived("d");
+print d.name + ": " + d.log;
+

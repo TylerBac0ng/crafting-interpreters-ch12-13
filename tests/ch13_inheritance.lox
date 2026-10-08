@@ -1,0 +1,77 @@
+// Chapter 13 itself: superclasses, inherited methods and super.
+
+// Inherited methods, from the book.
+class Doughnut {
+  cook() {
+    print "Fry until golden brown.";
+  }
+}
+class BostonCream < Doughnut {}
+BostonCream().cook();
+
+// super reaches a superclass method from a method the superclass does
+// not have.
+class Cruller < Doughnut {
+  finish() {
+    super.cook();
+    print "Twist and glaze.";
+  }
+}
+Cruller().finish();
+
+// super is bound to the class the method is written in, not the class
+// of "this", so it skips a level correctly (the A/B/C example from the
+// chapter).
+class A {
+  method() {
+    print "A method";
+  }
+}
+class B < A {
+  test() {
+    super.method();
+  }
+}
+class C < B {}
+C().test();
+
+// init is inherited, and fields set in it are visible to subclasses.
+class Named {
+  init(name) {
+    this.name = name;
+  }
+}
+class Greeter < Named {
+  greet() {
+    print "Hello, " + this.name + "!";
+  }
+}
+Greeter("Lox").greet();
+
+// A subclass in a block: the "super" environment and the class's own
+// slot don't disturb the other locals (11.4).
+{
+  var first = "first";
+  class Local < Doughnut {
+    eat() {
+      super.cook();
+      print "Eat it.";
+    }
+  }
+  var second = "second";
+  Local().eat();
+  print first + " " + second;
+}
+
+// super.method can be stored and called later.
+class Stash < Doughnut {
+  grab() {
+    return super.cook;
+  }
+}
+var later = Stash().grab();
+later();
+
+// Inheriting from something that is not a class is a runtime error.
+var NotAClass = "I am totally not a class";
+class Subclass < NotAClass {}

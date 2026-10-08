@@ -1,0 +1,94 @@
+// Chapter 12, challenge 2: getter methods.
+
+// The example from the book.
+class Circle {
+  init(radius) {
+    this.radius = radius;
+  }
+
+  area {
+    return 3.141592653 * this.radius * this.radius;
+  }
+}
+var circle = Circle(4);
+print circle.area;
+
+// A getter runs every time it is read, so it sees the current fields.
+circle.radius = 1;
+print circle.area;
+
+// Getters and normal methods side by side, and a getter that calls a
+// method.
+class Rect {
+  init(w, h) {
+    this.w = w;
+    this.h = h;
+  }
+
+  area {
+    return this.w * this.h;
+  }
+
+  perimeter() {
+    return 2 * (this.w + this.h);
+  }
+
+  summary {
+    return "area " + this.describe(this.area) +
+        ", perimeter " + this.describe(this.perimeter());
+  }
+
+  describe(n) {
+    if (n > 10) return "big";
+    return "small";
+  }
+}
+var r = Rect(3, 5);
+print r.area;
+print r.perimeter();
+print r.summary;
+
+// A getter is inherited, and super.getter runs the superclass's getter.
+class Square < Rect {
+  init(side) {
+    this.w = side;
+    this.h = side;
+  }
+
+  doubled() {
+    return super.area * 2;
+  }
+}
+// Square's init never runs: BETA lookup (chapter 13, challenge 2) means
+// Rect.init runs, which takes two arguments.
+var sq = Square(2, 2);
+print sq.area;
+print sq.doubled();
+
+// A getter is still a method with no parameters, so it can have locals.
+class Counter {
+  init() {
+    this.reads = 0;
+  }
+
+  next {
+    var before = this.reads;
+    this.reads = before + 1;
+    return before;
+  }
+}
+var counter = Counter();
+print counter.next;
+print counter.next;
+print counter.next;
+
+// Fields win over getters, the same way they win over methods.
+class Shadow {
+  value {
+    return "getter";
+  }
+}
+var s = Shadow();
+print s.value;
+s.value = "field";
+print s.value;

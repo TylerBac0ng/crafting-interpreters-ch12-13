@@ -1,0 +1,19 @@
+// Chapter 12: errors reported by the resolver.
+print this;
+
+fun notAMethod() {
+  print this;
+}
+
+class Foo {
+  init() {
+    return "something else";
+  }
+}
+
+// Chapter 12, challenge 2: init can't be a getter.
+class Bar {
+  init {
+    return nil;
+  }
+}

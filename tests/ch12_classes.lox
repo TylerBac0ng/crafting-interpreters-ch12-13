@@ -1,0 +1,106 @@
+// Chapter 12 itself: classes, instances, fields, methods, this and init.
+
+class Bacon {
+  eat() {
+    print "Crunch crunch crunch!";
+  }
+}
+Bacon().eat();
+print Bacon;
+print Bacon();
+
+// Fields are added freely; methods read them through "this".
+class Cake {
+  taste() {
+    var adjective = "delicious";
+    print "The " + this.flavor + " cake is " + adjective + "!";
+  }
+}
+var cake = Cake();
+cake.flavor = "German chocolate";
+cake.taste();
+
+// A method pulled off an instance stays bound to it.
+class Person {
+  sayName() {
+    print this.name;
+  }
+}
+var jane = Person();
+jane.name = "Jane";
+var bill = Person();
+bill.name = "Bill";
+bill.sayName = jane.sayName;
+bill.sayName();
+
+// A closure inside a method captures "this".
+class Thing {
+  getCallback() {
+    fun localFunction() {
+      print this;
+    }
+    return localFunction;
+  }
+}
+var callback = Thing().getCallback();
+callback();
+
+// init runs on construction; calling it again returns "this", and an
+// early "return;" in init still returns "this".
+class Point {
+  init(x, y) {
+    this.x = x;
+    this.y = y;
+    if (x == 0) return;
+    this.nonzero = true;
+  }
+  sum() {
+    return this.x + this.y;
+  }
+}
+var p = Point(3, 4);
+print p.sum();
+print p.nonzero;
+print p.init(10, 20) == p;
+print p.sum();
+print Point(0, 1).sum();
+
+// Fields shadow methods.
+class Box {
+  value() {
+    return "method";
+  }
+}
+var box = Box();
+box.value = fun () { return "field"; };
+print box.value();
+
+// A class declared inside a block is a local with its own slot (11.4).
+{
+  var before = "before";
+  class Local {
+    hello() {
+      return "hello from a local class";
+    }
+  }
+  var after = "after";
+  print before + " " + Local().hello() + " " + after;
+}
+
+// Classes work with the REPL-era features: lambdas as fields.
+class Counter {
+  init() {
+    this.count = 0;
+  }
+  incrementer() {
+    return fun () {
+      this.count = this.count + 1;
+      return this.count;
+    };
+  }
+}
+var c = Counter();
+var inc = c.incrementer();
+inc();
+inc();
+print c.count;

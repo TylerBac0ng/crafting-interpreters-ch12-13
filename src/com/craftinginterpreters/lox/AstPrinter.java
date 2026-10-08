@@ -1,0 +1,116 @@
+package com.craftinginterpreters.lox;
+
+class AstPrinter implements Expr.Visitor<String> {
+  String print(Expr expr) {
+    return expr.accept(this);
+  }
+
+  @Override
+  public String visitAssignExpr(Expr.Assign expr) {
+    return parenthesize("= " + expr.name.lexeme, expr.value);
+  }
+
+  @Override
+  public String visitBinaryExpr(Expr.Binary expr) {
+    return parenthesize(expr.operator.lexeme, expr.left, expr.right);
+  }
+
+  @Override
+  public String visitCallExpr(Expr.Call expr) {
+    Expr[] parts = new Expr[expr.arguments.size() + 1];
+    parts[0] = expr.callee;
+    for (int i = 0; i < expr.arguments.size(); i++) {
+      parts[i + 1] = expr.arguments.get(i);
+    }
+    return parenthesize("call", parts);
+  }
+
+  @Override
+  public String visitFunctionExpr(Expr.Function expr) {
+    if (expr.params == null) return "(getter ...)";
+    StringBuilder params = new StringBuilder();
+    for (Token param : expr.params) {
+      params.append(" ").append(param.lexeme);
+    }
+    return "(fun (" + params.toString().trim() + ") ...)";
+  }
+
+  @Override
+  public String visitGetExpr(Expr.Get expr) {
+    return parenthesize("." + expr.name.lexeme, expr.object);
+  }
+
+  @Override
+  public String visitIndexExpr(Expr.Index expr) {
+    return parenthesize("[]", expr.object, expr.index);
+  }
+
+  @Override
+  public String visitIndexSetExpr(Expr.IndexSet expr) {
+    return parenthesize("[]=", expr.object, expr.index, expr.value);
+  }
+
+  @Override
+  public String visitInnerExpr(Expr.Inner expr) {
+    return "inner";
+  }
+
+  @Override
+  public String visitListLiteralExpr(Expr.ListLiteral expr) {
+    return parenthesize("list", expr.elements.toArray(new Expr[0]));
+  }
+
+  @Override
+  public String visitSetExpr(Expr.Set expr) {
+    return parenthesize("=." + expr.name.lexeme, expr.object, expr.value);
+  }
+
+  @Override
+  public String visitSuperExpr(Expr.Super expr) {
+    return "(super ." + expr.method.lexeme + ")";
+  }
+
+  @Override
+  public String visitThisExpr(Expr.This expr) {
+    return "this";
+  }
+
+  @Override
+  public String visitGroupingExpr(Expr.Grouping expr) {
+    return parenthesize("group", expr.expression);
+  }
+
+  @Override
+  public String visitLiteralExpr(Expr.Literal expr) {
+    if (expr.value == null) return "nil";
+    return expr.value.toString();
+  }
+
+  @Override
+  public String visitLogicalExpr(Expr.Logical expr) {
+    return parenthesize(expr.operator.lexeme, expr.left, expr.right);
+  }
+
+  @Override
+  public String visitUnaryExpr(Expr.Unary expr) {
+    return parenthesize(expr.operator.lexeme, expr.right);
+  }
+
+  @Override
+  public String visitVariableExpr(Expr.Variable expr) {
+    return expr.name.lexeme;
+  }
+
+  private String parenthesize(String name, Expr... exprs) {
+    StringBuilder builder = new StringBuilder();
+
+    builder.append("(").append(name);
+    for (Expr expr : exprs) {
+      builder.append(" ");
+      builder.append(expr.accept(this));
+    }
+    builder.append(")");
+
+    return builder.toString();
+  }
+}
