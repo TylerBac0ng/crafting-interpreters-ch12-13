@@ -27,7 +27,7 @@ java -cp build com.craftinginterpreters.lox.Lox file.lox   # run a script
    `super.area` runs the superclass's getter, and `init` can't be a getter.
    See `tests/ch12_getters.lox`.
 3. **Open fields vs. encapsulation vs. access modifiers.** Written answer only
-   (see `answers.pdf`).
+   (submitted separately).
 
 ## Chapter 13 — Inheritance
 
@@ -39,7 +39,7 @@ java -cp build com.craftinginterpreters.lox.Lox file.lox   # run a script
    the same name, that is an error unless the class defines the method itself.
    The same method reached through two paths (a diamond) is not a conflict.
    Traits can use other traits and can have getters and static methods. See
-   `tests/ch13_traits.lox`; the reasons for choosing traits are in `answers.pdf`.
+   `tests/ch13_traits.lox`; the reasons for choosing traits are in the written answers, submitted separately.
 2. **BETA-style `inner()`.** Method lookup now starts at the **top** of the
    hierarchy, so a superclass's method wins. A subclass's version only runs when
    the superclass method calls `inner()`, which runs the next refinement down
